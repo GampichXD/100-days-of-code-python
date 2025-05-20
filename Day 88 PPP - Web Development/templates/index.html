@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1 class="mb-4">☕ Cafe Explorer</h1>
+<a href="{{ url_for('add') }}" class="btn btn-success mb-3">+ Add Cafe</a>
+<table class="table table-striped table-hover">
+    <thead class="table-dark">
+        <tr>
+            <th>Name</th><th>Location</th><th>Seats</th>
+            <th>Coffee</th><th>WiFi</th><th>Power</th><th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for cafe in cafes %}
+        <tr>
+            <td><a href="{{ cafe[3] }}" target="_blank">{{ cafe[1] }}</a></td>
+            <td>{{ cafe[2] }}</td>
+            <td>{{ cafe[5] }}</td>
+            <td>{{ cafe[6] }}</td>
+            <td>{{ cafe[7] }}</td>
+            <td>{{ cafe[8] }}</td>
+            <td>
+                <a href="{{ url_for('delete', cafe_id=cafe[0]) }}" class="btn btn-sm btn-danger">Delete</a>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

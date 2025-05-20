@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2 class="mb-4">Add a New Cafe</h2>
+<form method="POST" class="row g-3">
+    <input class="form-control" name="name" placeholder="Cafe Name" required>
+    <input class="form-control" name="location" placeholder="Location" required>
+    <input class="form-control" name="map_url" placeholder="Google Maps URL" required>
+    <input class="form-control" name="img_url" placeholder="Image URL">
+    <input class="form-control" name="seats" placeholder="Seats (e.g. 10-20)">
+    <input class="form-control" name="coffee_rating" placeholder="☕ Rating (e.g. 4/5)">
+    <input class="form-control" name="wifi_rating" placeholder="📶 Rating (e.g. 5/5)">
+    <input class="form-control" name="power_rating" placeholder="🔌 Rating (e.g. 3/5)">
+    <button class="btn btn-primary" type="submit">Add Cafe</button>
+</form>
+{% endblock %}

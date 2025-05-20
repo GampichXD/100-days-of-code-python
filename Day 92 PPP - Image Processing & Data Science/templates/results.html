@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><title>Top Colors</title></head>
+<body>
+  <h2>Top 10 Colors</h2>
+  <div style="display:flex; gap:10px;">
+    {% for color, count in colors %}
+      <div style="background-color: {{ color }}; width: 100px; height: 100px; text-align:center; color: white; font-weight:bold;">
+        {{ color }}<br>{{ count }} px
+      </div>
+    {% endfor %}
+  </div>
+  <a href="{{ url_for('upload_image') }}">Try another image</a>
+</body>
+</html>
