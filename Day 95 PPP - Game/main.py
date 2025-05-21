@@ -1,59 +1,57 @@
+# Professional Portfolio Project - Game
+# Space Invaders
+# Author : Abraham
 import turtle
 import time
 import random
 import math
-import os
 
-# --- Setup Window ---
+# Set up the screen
 win = turtle.Screen()
 win.bgcolor("black")
-win.title("Space Invaders PNG Edition")
+win.title("Space Invaders")
 win.setup(width=600, height=600)
-win.tracer(0)  # Turn off animation for faster drawing
 
-# --- Register PNG images ---
-# Convert .png to .gif temporarily if needed using Pillow, but Turtle 3.7+ supports PNG
-try:
-    win.register_shape("player.png")
-    win.register_shape("enemy.png")
-except:
-    print("Make sure your PNGs are in the correct path and compatible.")
+# Register shapes
+win.register_shape("invader_small.gif")
+win.register_shape("spaceship.gif")
 
-# --- Score Display ---
+# Score display
 score = 0
 score_display = turtle.Turtle()
-score_display.hideturtle()
-score_display.penup()
 score_display.color("white")
+score_display.penup()
+score_display.hideturtle()
 score_display.goto(-250, 260)
 score_display.write(f"Score: {score}", font=("Arial", 14, "normal"))
 
-# --- Player ---
+# Player
 player = turtle.Turtle()
-player.shape("player.png")
+player.shape("spaceship.gif")
 player.penup()
 player.goto(0, -250)
 player.setheading(90)
-player_speed = 20
+player_speed = 15
 
-# --- Bullet ---
+# Bullet
 bullet = turtle.Turtle()
-bullet.shape("circle")
+bullet.shape("triangle")
 bullet.color("yellow")
-bullet.shapesize(0.3, 0.3)
 bullet.penup()
-bullet.hideturtle()
+bullet.speed(0)
 bullet.setheading(90)
-bullet_speed = 25
+bullet.shapesize(0.5, 0.5)
+bullet.hideturtle()
+bullet_speed = 20
 bullet_state = "ready"
 
-# --- Enemies ---
-num_enemies = 6
+# Enemy setup
+num_enemies = 5
 enemies = []
 
-for _ in range(num_enemies):
+for i in range(num_enemies):
     enemy = turtle.Turtle()
-    enemy.shape("enemy.png")
+    enemy.shape("invader_small.gif")
     enemy.penup()
     x = random.randint(-200, 200)
     y = random.randint(100, 250)
@@ -62,20 +60,22 @@ for _ in range(num_enemies):
 
 enemy_speed = 5
 
-# --- Functions ---
-
+# Move player
 def move_left():
-    x = player.xcor() - player_speed
+    x = player.xcor()
+    x -= player_speed
     if x < -270:
         x = -270
     player.setx(x)
 
 def move_right():
-    x = player.xcor() + player_speed
+    x = player.xcor()
+    x += player_speed
     if x > 270:
         x = 270
     player.setx(x)
 
+# Fire bullet
 def fire_bullet():
     global bullet_state
     if bullet_state == "ready":
@@ -85,47 +85,50 @@ def fire_bullet():
         bullet.goto(x, y)
         bullet.showturtle()
 
+# Collision detection
 def is_collision(t1, t2):
-    return t1.distance(t2) < 20
+    distance = math.sqrt(math.pow(t1.xcor()-t2.xcor(),2) + math.pow(t1.ycor()-t2.ycor(),2))
+    return distance < 20
 
-# --- Controls ---
+# Keyboard bindings
 win.listen()
 win.onkeypress(move_left, "Left")
 win.onkeypress(move_right, "Right")
 win.onkeypress(fire_bullet, "space")
 
-# --- Game Loop ---
-game_over = False
-
-while not game_over:
-    win.update()
-
+# Main game loop
+game_running = True
+while game_running:
     for enemy in enemies:
-        x = enemy.xcor() + enemy_speed
+        x = enemy.xcor()
+        x += enemy_speed
         enemy.setx(x)
 
-        # Bounce
+        # Reverse and move down
         if enemy.xcor() > 270 or enemy.xcor() < -270:
             enemy_speed *= -1
             for e in enemies:
                 e.sety(e.ycor() - 30)
 
-        # Collision with player
+        # Check for game over
         if enemy.ycor() < -230:
             player.hideturtle()
             for e in enemies:
                 e.hideturtle()
+            print("GAME OVER")
             score_display.goto(0, 0)
             score_display.write("GAME OVER", align="center", font=("Arial", 24, "bold"))
-            game_over = True
+            game_running = False
             break
 
-        # Collision with bullet
+        # Check for collision
         if is_collision(bullet, enemy):
             bullet.hideturtle()
             bullet_state = "ready"
             bullet.goto(0, -400)
-            enemy.goto(random.randint(-200, 200), random.randint(150, 250))
+            x = random.randint(-200, 200)
+            y = random.randint(150, 250)
+            enemy.goto(x, y)
             score += 10
             score_display.clear()
             score_display.goto(-250, 260)
@@ -133,14 +136,16 @@ while not game_over:
 
     # Move bullet
     if bullet_state == "fire":
-        y = bullet.ycor() + bullet_speed
+        y = bullet.ycor()
+        y += bullet_speed
         bullet.sety(y)
 
-    # Bullet off-screen
+    # Bullet reset
     if bullet.ycor() > 275:
         bullet.hideturtle()
         bullet_state = "ready"
 
     time.sleep(0.02)
 
+# Keep window open
 win.mainloop()
